@@ -1,9 +1,6 @@
 package com.lightsengine.test;
 
-import com.lightsengine.core.ILogic;
-import com.lightsengine.core.ObjectLoader;
-import com.lightsengine.core.RenderManager;
-import com.lightsengine.core.WindowManager;
+import com.lightsengine.core.*;
 import com.lightsengine.core.entity.Model;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -14,6 +11,7 @@ public class TestGame implements ILogic {
 
     private final RenderManager renderer;
     private final ObjectLoader loader;
+
     private final WindowManager window;
 
     private Model model;
@@ -36,7 +34,12 @@ public class TestGame implements ILogic {
                 -0.5f, 0.5f, 0f
         };
 
-        model = loader.loadModel(vertices);
+        int[] indices = {
+            0, 1, 3,
+            3, 1, 2
+        };
+
+        model = loader.loadModel(vertices, indices);
     }
 
     @Override
