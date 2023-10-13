@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL11;
 
 public class TestGame implements ILogic {
     private int direction = 0;
-    private float color = 0.0f;
+    private float colour = 0.0f;
 
     private final RenderManager renderer;
     private final ObjectLoader loader;
@@ -54,12 +54,12 @@ public class TestGame implements ILogic {
 
     @Override
     public void update() {
-        color += direction * 0.01f;
-        if (color > 1) {
-            color = 1.0f;
+        colour += direction * 0.01f;
+        if (colour > 1) {
+            colour = 1.0f;
         }
-        else if (color <= 0) {
-            color = 0.0f;
+        else if (colour <= 0) {
+            colour = 0.0f;
         }
     }
 
@@ -70,7 +70,7 @@ public class TestGame implements ILogic {
             window.setResize(true);
         }
 
-        window.setClearColor(color, color, color, 0.0f);
+        window.setClearColor(colour, colour, colour, 0.0f);
         renderer.render(model);
     }
 

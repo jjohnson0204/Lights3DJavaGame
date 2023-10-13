@@ -45,13 +45,11 @@ public class ObjectLoader {
     }
 
     public void cleanup() {
-        for (int vao :
-                vaos) {
+        for (int vao : vaos) {
             GL30.glDeleteVertexArrays(vao);
         }
-        for (int vbo :
-                vbos) {
-            GL30.glDeleteVertexArrays(vbo);
+        for (int vbo : vbos) {
+            GL30.glDeleteBuffers(vbo);
         }
     }
 }
