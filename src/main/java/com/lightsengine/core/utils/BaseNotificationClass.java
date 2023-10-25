@@ -4,7 +4,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 public class BaseNotificationClass {
-    private PropertyChangeSupport propertyChangeSupport;
+    private final PropertyChangeSupport propertyChangeSupport;
 
     public BaseNotificationClass() {
         propertyChangeSupport = new PropertyChangeSupport(this);

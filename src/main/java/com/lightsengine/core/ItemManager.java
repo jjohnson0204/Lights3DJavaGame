@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemManager {
-    private static List<GameItem> _standardGameItems;
+    private static final List<GameItem> _standardGameItems;
     static {
         _standardGameItems = new ArrayList<>();
         _standardGameItems.add(new Weapon(1001, "Pointy Stick", 1, 1, 2));

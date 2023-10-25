@@ -6,12 +6,12 @@ import com.lightsengine.core.quest.Quest;
 import java.util.ArrayList;
 
 public class QuestManager {
-    private static final ArrayList<Quest> _quests = new ArrayList<Quest>();
+    private static final ArrayList<Quest> _quests = new ArrayList<>();
     static
     {
         // Declare the items need to complete the quest, and its reward items
-        ArrayList<ItemQuantity> itemsToComplete = new ArrayList<ItemQuantity>();
-        ArrayList<ItemQuantity> rewardItems = new ArrayList<ItemQuantity>();
+        ArrayList<ItemQuantity> itemsToComplete = new ArrayList<>();
+        ArrayList<ItemQuantity> rewardItems = new ArrayList<>();
         itemsToComplete.add(new ItemQuantity(9001, 5));
         rewardItems.add(new ItemQuantity(1002, 1));
         // Create the quest
@@ -19,7 +19,6 @@ public class QuestManager {
     }
     public static Quest GetQuestByID(int id)
     {
-
         return _quests.stream()
                 .filter(quest -> quest.getID() == id)
                 .findFirst()

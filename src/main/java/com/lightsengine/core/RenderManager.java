@@ -39,12 +39,12 @@ public class RenderManager {
         shader.setUniform("projectionMatrix", window.updateProjectionMatrix());
         shader.setUniform("viewMatrix", Transformation.getViewMatrix(camera));
 
-        GL30.glBindVertexArray(entity.getModel().getId());
+        GL30.glBindVertexArray(entity.model().getId());
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, entity.getModel().getTexture().getId());
-        GL11.glDrawElements(GL11.GL_TRIANGLES, entity.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, entity.model().getTexture().getId());
+        GL11.glDrawElements(GL11.GL_TRIANGLES, entity.model().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
         GL20.glDisableVertexAttribArray(0);
         GL20.glDisableVertexAttribArray(2);
         GL30.glBindVertexArray(0);

@@ -14,11 +14,11 @@ public class Player extends BaseNotificationClass {
     private int experiencePoints;
     private int level;
     private int gold;
-    private PropertyChangeSupport propertyChangeSupport;
+    private final PropertyChangeSupport propertyChangeSupport;
 
     public Player() {
         propertyChangeSupport = new PropertyChangeSupport(this);
-        setInventory(new ArrayList<GameItem>());
+        setInventory(new ArrayList<>());
     }
 
     public String getName() {
