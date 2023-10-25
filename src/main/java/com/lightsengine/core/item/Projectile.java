@@ -1,4 +1,4 @@
-package com.lightsengine.core.item.weapon;
+package com.lightsengine.core.item;
 
 import com.lightsengine.core.entity.enemy.Enemy;
 import org.joml.Vector3f;

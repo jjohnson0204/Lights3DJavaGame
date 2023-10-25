@@ -1,6 +1,6 @@
 package com.lightsengine.core.entity.character;
 
-import com.lightsengine.core.item.weapon.GameItem;
+import com.lightsengine.core.item.GameItem;
 import com.lightsengine.core.utils.BaseNotificationClass;
 
 import java.beans.PropertyChangeListener;

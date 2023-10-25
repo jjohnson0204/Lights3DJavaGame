@@ -1,4 +1,4 @@
-package com.lightsengine.core.item.weapon;
+package com.lightsengine.core.item;
 
 public class Weapon extends GameItem {
 
