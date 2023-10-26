@@ -1,7 +1,7 @@
 #version 400 core
 
 in vec3 position;
-in vec2 texCoord;
+in vec2 texCoords;
 
 out vec3 colour;
 out vec2 fragTexCoord;
@@ -12,6 +12,6 @@ uniform mat4 viewMatrix;
 
 void main() {
     gl_Position = projectionMatrix * viewMatrix * transformationMatrix * vec4(position, 1.0);
-    fragTexCoord = texCoord;
+    fragTexCoord = texCoords;
     colour = vec3(position.x + 0.5, 0.0, position.y + 0.5);
 }

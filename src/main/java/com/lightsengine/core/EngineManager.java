@@ -1,33 +1,35 @@
 package com.lightsengine.core;
 
-import com.lightsengine.test.Launcher;
+import com.lightsengine.core.inputs.MouseInput;
+import com.lightsengine.test.Main;
 import com.lightsengine.core.utils.Consts;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.opengl.GL11;
+
+import static org.lwjgl.opengl.GL11.GL_VERSION;
 
 public class EngineManager {
-
     public static final long NANOSECOND = 1000000000L;
     public static final float FRAMERATE = 1000.0f;
-
     private static int fps;
     private static final float frameTime = 1.0f / FRAMERATE;
-
     private boolean isRunning;
-
-    private WindowManager window;
+    private WindowManager windowManager;
+    private MouseInput mouseInput;
     private GLFWErrorCallback errorCallback;
-
     private ILogic gameLogic;
 
     private  void init() throws Exception {
         GLFW.glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
-        window = Launcher.getWindow();
-        gameLogic = Launcher.getGame();
-        window.init();
-        gameLogic.init();
-    }
+        windowManager = Main.getWindowManager();
+        mouseInput = new MouseInput();
+        gameLogic = Main.getGame();
 
+        windowManager.init();
+        gameLogic.init();
+        mouseInput.init();
+    }
     public void start() throws Exception {
         init();
         if (isRunning) {
@@ -57,20 +59,20 @@ public class EngineManager {
                 render = true;
                 unprocessedTime -= frameTime;
 
-                if (window.windowShouldClose()) {
+                if (windowManager.windowShouldClose()) {
                     stop();
                 }
 
                 if (frameCounter >= NANOSECOND) {
                     setFps(frames);
-                    window.setTitle(Consts.TITLE + " - FPS: " + getFps());
+                    windowManager.setTitle(Consts.TITLE + " - FPS: " + getFps());
                     frames = 0;
                     frameCounter = 0;
                 }
             }
 
             if (render) {
-                update();
+                update(frameTime);
                 render();
                 frames++;
             }
@@ -83,22 +85,20 @@ public class EngineManager {
         }
         isRunning = false;
      }
-
     private void input() {
+        mouseInput.input();
         gameLogic.input();
      }
-
     private void render() {
         gameLogic.render();
-        window.update();
+        windowManager.update();
     }
-    private void update() {
-        gameLogic.update();
+    private void update(float interval) {
+        gameLogic.update(interval, mouseInput);
      }
-
     private void cleanup() {
-        window.cleanup();
         gameLogic.cleanup();
+        windowManager.cleanup();
         errorCallback.free();
         GLFW.glfwTerminate();
     }

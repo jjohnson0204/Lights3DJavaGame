@@ -4,14 +4,14 @@ import com.lightsengine.core.EngineManager;
 import com.lightsengine.core.WindowManager;
 import com.lightsengine.core.utils.Consts;
 
-public class Launcher {
+public class Main {
 
-    private static WindowManager window;
+    private static WindowManager windowManager;
     private static TestGame game;
 
 
     public static void main(String[] args) {
-        window = new WindowManager(Consts.TITLE, 1600, 900, false);
+        windowManager = new WindowManager(Consts.TITLE, 1600, 900, true);
         game = new TestGame();
         EngineManager engine = new EngineManager();
         try {
@@ -22,8 +22,8 @@ public class Launcher {
         }
     }
 
-    public static WindowManager getWindow() {
-        return window;
+    public static WindowManager getWindowManager() {
+        return windowManager;
     }
 
     public static TestGame getGame() {

@@ -4,18 +4,19 @@ import com.lightsengine.core.*;
 import com.lightsengine.core.entity.Entity;
 import com.lightsengine.core.entity.Model;
 import com.lightsengine.core.entity.Texture;
+import com.lightsengine.core.inputs.MouseInput;
+import com.lightsengine.core.utils.Consts;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
-import static org.lwjgl.opengl.GL11.glViewport;
-
 public class TestGame implements ILogic {
 
     private static final float CAMERA_MOVE_SPEED = 0.05f;
-    private final RenderManager renderer;
-    private final ObjectLoader loader;
-    private final WindowManager window;
+    private final RenderManager renderManager;
+    private final ObjectLoader objectLoader;
+    private final WindowManager windowManager;
 
     private Entity entity;
     private Camera camera;
@@ -23,15 +24,15 @@ public class TestGame implements ILogic {
     Vector3f cameraInc;
 
     public TestGame() {
-        renderer = new RenderManager();
-        window = Launcher.getWindow();
-        loader = new ObjectLoader();
+        renderManager = new RenderManager();
+        windowManager = Main.getWindowManager();
+        objectLoader = new ObjectLoader();
         camera = new Camera();
         cameraInc = new Vector3f(0, 0,0);
     }
     @Override
     public void init() throws Exception {
-        renderer.init();
+        renderManager.init();
 
         float[] vertices = new float[] {
                 -0.5f, 0.5f, 0.5f,
@@ -55,7 +56,7 @@ public class TestGame implements ILogic {
                 -0.5f, -0.5f, 0.5f,
                 0.5f, -0.5f, 0.5f,
         };
-        float[] textCoords = new float[]{
+        float[] texCoords = new float[]{
                 0.0f, 0.0f,
                 0.0f, 0.5f,
                 0.5f, 0.5f,
@@ -86,8 +87,8 @@ public class TestGame implements ILogic {
                 4, 6, 7, 5, 4, 7,
         };
 
-        Model model = loader.loadModel(vertices,textCoords, indices);
-        model.setTexture(new Texture(loader.loadTexture("textures/grassblock.png")));
+        Model model = objectLoader.loadModel(vertices,texCoords, indices);
+        model.setTexture(new Texture(objectLoader.loadTexture("D:\\JavaGames\\Java3DGame\\Java3DGame\\textures\\grassblock.png")));
         entity = new Entity(model, new Vector3f(0, 0, -5), new Vector3f(0, 0, 0), 1);
     }
 
@@ -95,49 +96,58 @@ public class TestGame implements ILogic {
     public void input() {
         cameraInc.set(0, 0,0);
 
-        if (window.isKeyPressed(GLFW.GLFW_KEY_W)) {
+        if (windowManager.isKeyPressed(GLFW.GLFW_KEY_W)) {
             cameraInc.z = -1;
         }
-        if (window.isKeyPressed(GLFW.GLFW_KEY_S)) {
+        if (windowManager.isKeyPressed(GLFW.GLFW_KEY_S)) {
             cameraInc.z = 1;
         }
 
-        if (window.isKeyPressed(GLFW.GLFW_KEY_A)) {
+        if (windowManager.isKeyPressed(GLFW.GLFW_KEY_A)) {
             cameraInc.x = -1;
         }
-        if (window.isKeyPressed(GLFW.GLFW_KEY_D)) {
+        if (windowManager.isKeyPressed(GLFW.GLFW_KEY_D)) {
             cameraInc.x = 1;
         }
 
-        if (window.isKeyPressed(GLFW.GLFW_KEY_Z)) {
+        if (windowManager.isKeyPressed(GLFW.GLFW_KEY_Z)) {
             cameraInc.y = -1;
         }
-        if (window.isKeyPressed(GLFW.GLFW_KEY_X)) {
+        if (windowManager.isKeyPressed(GLFW.GLFW_KEY_X)) {
             cameraInc.y = 1;
         }
     }
 
     @Override
-    public void update() {
-        camera.movePosition(cameraInc.x * CAMERA_MOVE_SPEED, cameraInc.y * CAMERA_MOVE_SPEED, cameraInc.z * CAMERA_MOVE_SPEED);
+    public void update(float interval, MouseInput mouseInput) {
+        camera.movePosition(
+                cameraInc.x * Consts.CAMERA_STEP,
+                cameraInc.y * Consts.CAMERA_STEP,
+                cameraInc.z * Consts.CAMERA_STEP
+        );
 
-        entity.incRotation(0.0f, 0.5f, 0.0f);
+        if (mouseInput.isRightButtonPress()) {
+            Vector2f rotVec = mouseInput.getDisplayVec();
+            camera.moveRotation(rotVec.x * Consts.MOUSE_SENSITIVITY, rotVec.y * Consts.MOUSE_SENSITIVITY, 0);
+        }
+
+        entity.incrementRotation(0.0f, 0.5f, 0.0f);
     }
 
     @Override
     public void render() {
-        if (window.isResize()) {
-            GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
-            window.setResize(false);
+        if (windowManager.isResize()) {
+            GL11.glViewport(0, 0, windowManager.getWidth(), windowManager.getHeight());
+            windowManager.setResize(true);
         }
-
-        window.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        renderer.render(entity, camera);
+        var color = 0.0f;
+        windowManager.setClearColor(color, color, color, 0.0f);
+        renderManager.render(entity, camera);
     }
 
     @Override
     public void cleanup() {
-        renderer.cleanup();
-        loader.cleanup();
+        renderManager.cleanup();
+        objectLoader.cleanup();
     }
 }

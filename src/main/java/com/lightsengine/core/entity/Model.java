@@ -1,7 +1,6 @@
 package com.lightsengine.core.entity;
 
 public class Model {
-
     private int id;
     private int vertexCount;
     private Texture texture;
