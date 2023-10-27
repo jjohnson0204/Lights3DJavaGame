@@ -1,6 +1,7 @@
 package com.lightsengine.core;
 
 import com.lightsengine.core.entity.Entity;
+import com.lightsengine.core.lighting.DirectionalLight;
 import com.lightsengine.core.utils.Consts;
 import com.lightsengine.core.utils.Transformation;
 import com.lightsengine.core.utils.Utils;
@@ -19,6 +20,8 @@ public class RenderManager {
     private final String viewMatrixUniformName = "viewMatrix";
     private final String ambientLightUniformName = "ambientLight";
     private final String materialUniformName = "material";
+    private final String specularPowerUniformName = "specularPower";
+    private final String directionalLightUniformName = "directionalLight";
     private ShaderManager shaderManager;
     public RenderManager() {
         windowManager = Main.getWindowManager();
@@ -34,8 +37,10 @@ public class RenderManager {
         shaderManager.createUniform(viewMatrixUniformName);
         shaderManager.createUniform(ambientLightUniformName);
         shaderManager.createMaterialUniform(materialUniformName);
+        shaderManager.createUniform(specularPowerUniformName);
+        shaderManager.createDirectionalLightUniform(directionalLightUniformName);
     }
-    public void render(Entity entity, Camera camera) {
+    public void render(Entity entity, Camera camera, DirectionalLight directionalLight) {
         clear();
 
         if (windowManager.isResize()) {
@@ -50,6 +55,8 @@ public class RenderManager {
         shaderManager.setUniform(viewMatrixUniformName, Transformation.getViewMatrix(camera));
         shaderManager.setUniform(ambientLightUniformName, Consts.AMBIENT_LIGHT);
         shaderManager.setUniform(materialUniformName, entity.getModel().getMaterial());
+        shaderManager.setUniform(specularPowerUniformName, Consts.SPECULAR_POWER);
+        shaderManager.setUniform(directionalLightUniformName, directionalLight);
 
         GL30.glBindVertexArray(entity.getModel().getId());
         GL20.glEnableVertexAttribArray(0);
