@@ -8,6 +8,7 @@ import com.lightsengine.core.entity.Texture;
 import com.lightsengine.core.inputs.MouseInput;
 import com.lightsengine.core.lighting.DirectionalLight;
 import com.lightsengine.core.lighting.PointLight;
+import com.lightsengine.core.lighting.SpotLight;
 import com.lightsengine.core.utils.Consts;
 
 // JOML Imports
@@ -28,6 +29,7 @@ public class TestGame implements ILogic {
     private Camera camera;
     private DirectionalLight directionalLight;
     private PointLight pointLight;
+    private SpotLight spotLight;
 
     // TestGame Variables
     Vector3f cameraInc;
@@ -57,6 +59,11 @@ public class TestGame implements ILogic {
         Vector3f lightPosition = new Vector3f(0,1.25f,-6f);
         Vector3f lightColor = new Vector3f(1,0,0);
         pointLight = new PointLight(lightColor, lightPosition, lightIntensity, 0,0,1);
+
+        // Spotlight
+        Vector3f coneDirection = new Vector3f(0, -1.25f, -3.2f);
+        float cutoff = (float) Math.cos(Math.toRadians(180));
+        spotLight = new SpotLight(new PointLight(lightColor, new Vector3f(0, 0, 1f), lightIntensity, 0, 0, 1), coneDirection, cutoff);
 
         lightPosition = new Vector3f(-1,-10,0);
         lightColor = new Vector3f(1,1,1);
@@ -96,6 +103,13 @@ public class TestGame implements ILogic {
         if (windowManager.isKeyPressed(GLFW.GLFW_KEY_P)) {
             pointLight.getPosition().x -= 0.1f;
         }
+        var lightPos = spotLight.getPointLight().getPosition().z;
+
+        if (windowManager.isKeyPressed(GLFW.GLFW_KEY_N))
+            spotLight.getPointLight().getPosition().z = lightPos + 0.1f;
+
+        if (windowManager.isKeyPressed(GLFW.GLFW_KEY_M))
+            spotLight.getPointLight().getPosition().z = lightPos - 0.1f;
     }
     @Override
     public void update(float interval, MouseInput mouseInput) {
@@ -136,7 +150,7 @@ public class TestGame implements ILogic {
     }
     @Override
     public void render() {
-        renderManager.render(entity, camera, directionalLight, pointLight);
+        renderManager.render(entity, camera, directionalLight, pointLight, spotLight);
     }
     @Override
     public void cleanup() {

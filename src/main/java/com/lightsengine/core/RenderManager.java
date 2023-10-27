@@ -4,6 +4,7 @@ package com.lightsengine.core;
 import com.lightsengine.core.entity.Entity;
 import com.lightsengine.core.lighting.DirectionalLight;
 import com.lightsengine.core.lighting.PointLight;
+import com.lightsengine.core.lighting.SpotLight;
 import com.lightsengine.core.utils.Consts;
 import com.lightsengine.core.utils.Transformation;
 import com.lightsengine.core.utils.Utils;
@@ -32,6 +33,7 @@ public class RenderManager {
     private final String specularPowerUniformName = "specularPower";
     private final String directionalLightUniformName = "directionalLight";
     private final String pointLightUniformName = "pointLight";
+    private final String spotLightUniformName = "spotLight";
 
 
     //Main
@@ -54,11 +56,13 @@ public class RenderManager {
         shaderManager.createUniform(specularPowerUniformName);
         shaderManager.createDirectionalLightUniform(directionalLightUniformName);
         shaderManager.createPointLightUniform(pointLightUniformName);
+        shaderManager.createSpotLightUniform(spotLightUniformName);
     }
     public void render(Entity entity,
                        Camera camera,
                        DirectionalLight directionalLight,
-                       PointLight pointLight) {
+                       PointLight pointLight,
+                       SpotLight spotLight) {
         clear();
 
         if (windowManager.isResize()) {
@@ -76,6 +80,8 @@ public class RenderManager {
         shaderManager.setUniform(specularPowerUniformName, Consts.SPECULAR_POWER);
         shaderManager.setUniform(directionalLightUniformName, directionalLight);
         shaderManager.setUniform(pointLightUniformName, pointLight);
+        shaderManager.setUniform(spotLightUniformName, spotLight);
+
 
         GL30.glBindVertexArray(entity.getModel().getId());
         GL20.glEnableVertexAttribArray(0);
