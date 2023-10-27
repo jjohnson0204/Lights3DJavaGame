@@ -35,7 +35,7 @@ public class Utils {
         }
         return result;
     }
-    public static List<String> readAlllines(String fileName) {
+    public static List<String> readAllLines(String fileName) {
         List<String> list = new ArrayList<>();
         try(BufferedReader br = new BufferedReader(new InputStreamReader(Class.forName(Utils.class.getName()).getResourceAsStream(fileName)))) {
             String line;

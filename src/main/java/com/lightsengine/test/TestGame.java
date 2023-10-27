@@ -35,8 +35,9 @@ public class TestGame implements ILogic {
         renderManager.init();
 
         Model model = objectLoader.loadOBJModel("/models/bunny.obj");
-        model.setTexture(new Texture(objectLoader.loadTexture("D:\\JavaGames\\Java3DGame\\Java3DGame\\textures\\fur.png")));
-        entity = new Entity(model, new Vector3f(0, 0, -5), new Vector3f(0, 0, 0), 1);
+        model.setTexture(new Texture(objectLoader.loadTexture("D:\\JavaGames\\Java3DGame\\Java3DGame\\textures\\grassblock.png")), 3f);
+//        model.setTexture(new Texture(objectLoader.loadTexture("D:\\JavaGames\\Java3DGame\\Java3DGame\\textures\\2.jpg")));
+        entity = new Entity(model, new Vector3f(0, 0, -1), new Vector3f(0, 0, 0), 1);
     }
 
     @Override
@@ -63,6 +64,10 @@ public class TestGame implements ILogic {
         if (windowManager.isKeyPressed(GLFW.GLFW_KEY_X)) {
             cameraInc.y = 1;
         }
+        if (windowManager.isKeyPressed(GLFW.GLFW_KEY_C)) {
+            camera.setPosition(0, 0, 0);
+            camera.setRotation(0, 0, 0);
+        }
     }
 
     @Override
@@ -78,17 +83,11 @@ public class TestGame implements ILogic {
             camera.moveRotation(rotVec.x * Consts.MOUSE_SENSITIVITY, rotVec.y * Consts.MOUSE_SENSITIVITY, 0);
         }
 
-        entity.incrementRotation(0.0f, 0.5f, 0.0f);
+        entity.incrementRotation(0.0f, 0.25f, 0.0f);
     }
 
     @Override
     public void render() {
-        if (windowManager.isResize()) {
-            GL11.glViewport(0, 0, windowManager.getWidth(), windowManager.getHeight());
-            windowManager.setResize(true);
-        }
-        var color = 0.0f;
-        windowManager.setClearColor(color, color, color, 0.0f);
         renderManager.render(entity, camera);
     }
 
