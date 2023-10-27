@@ -1,22 +1,32 @@
 package com.lightsengine.core;
 
+// Class Imports
 import com.lightsengine.core.entity.Material;
 import com.lightsengine.core.lighting.DirectionalLight;
+
+// JOML Imports
+import com.lightsengine.core.lighting.PointLight;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 
+// Java Imports
 import java.util.HashMap;
 import java.util.Map;
 
+
+// Main
 public class ShaderManager {
+    // ShaderManager Variables
     private final int shaderInfoLogMaxLength = 1024;
     private final int programId;
     private int vertexShaderId, fragmentShaderId;
     private final Map<String, Integer> uniforms;
 
+
+    // Main
     public ShaderManager() throws Exception {
         programId = GL20.glCreateProgram();
 
@@ -25,6 +35,7 @@ public class ShaderManager {
 
         uniforms = new HashMap<>();
     }
+
 
     public void createUniform(String uniformName) throws Exception {
         var uniformLocation = GL20.glGetUniformLocation(programId, uniformName);
@@ -43,6 +54,14 @@ public class ShaderManager {
         createUniform(uniformName + ".specular");
         createUniform(uniformName + ".hasTexture");
         createUniform(uniformName + ".reflectance");
+    }
+    public void createPointLightUniform(String uniformName) throws Exception {
+        createUniform(uniformName + ".color");
+        createUniform(uniformName + ".position");
+        createUniform(uniformName + ".intensity");
+        createUniform(uniformName + ".constant");
+        createUniform(uniformName + ".linear");
+        createUniform(uniformName + ".exponent");
     }
     public void setUniform(String uniformName, Matrix4f value) {
         try(var stack = MemoryStack.stackPush()) {
@@ -79,6 +98,14 @@ public class ShaderManager {
         setUniform(uniformName + ".color", directionalLight.getColor());
         setUniform(uniformName + ".direction", directionalLight.getDirection());
         setUniform(uniformName + ".intensity", directionalLight.getIntensity());
+    }
+    public void setUniform(String uniformName, PointLight pointLight) {
+        setUniform(uniformName + ".color", pointLight.getColor());
+        setUniform(uniformName + ".position", pointLight.getPosition());
+        setUniform(uniformName + ".intensity", pointLight.getIntensity());
+        setUniform(uniformName + ".constant", pointLight.getConstant());
+        setUniform(uniformName + ".linear", pointLight.getLinear());
+        setUniform(uniformName + ".exponent", pointLight.getExponent());
     }
     public void createVertexShader(String shaderCode) throws Exception {
         vertexShaderId = createShader(shaderCode, GL20.GL_VERTEX_SHADER);

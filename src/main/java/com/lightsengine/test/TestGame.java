@@ -1,32 +1,39 @@
 package com.lightsengine.test;
 
+// Class Imports
 import com.lightsengine.core.*;
 import com.lightsengine.core.entity.Entity;
 import com.lightsengine.core.entity.Model;
 import com.lightsengine.core.entity.Texture;
 import com.lightsengine.core.inputs.MouseInput;
 import com.lightsengine.core.lighting.DirectionalLight;
+import com.lightsengine.core.lighting.PointLight;
 import com.lightsengine.core.utils.Consts;
+
+// JOML Imports
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+
+// LWJGL Imports
 import org.lwjgl.glfw.GLFW;
 
-
+//Main
 public class TestGame implements ILogic {
-
-    private static final float CAMERA_MOVE_SPEED = 0.05f;
+    // Variables
+    // Import Class Variables
     private final RenderManager renderManager;
     private final ObjectLoader objectLoader;
     private final WindowManager windowManager;
-
     private Entity entity;
     private Camera camera;
-
-    Vector3f cameraInc;
-
-    private float lightAngle;
     private DirectionalLight directionalLight;
+    private PointLight pointLight;
 
+    // TestGame Variables
+    Vector3f cameraInc;
+    private float lightAngle;
+
+    // Main
     public TestGame() {
         renderManager = new RenderManager();
         windowManager = Main.getWindowManager();
@@ -35,6 +42,8 @@ public class TestGame implements ILogic {
         cameraInc = new Vector3f(0, 0,0);
         lightAngle = -90;
     }
+
+
     @Override
     public void init() throws Exception {
         renderManager.init();
@@ -42,14 +51,17 @@ public class TestGame implements ILogic {
         Model model = objectLoader.loadOBJModel("/models/bunny.obj");
         model.setTexture(new Texture(objectLoader.loadTexture("D:\\JavaGames\\Java3DGame\\Java3DGame\\textures\\grassblock.png")), 1f);
 //        model.setTexture(new Texture(objectLoader.loadTexture("D:\\JavaGames\\Java3DGame\\Java3DGame\\textures\\2.jpg")));
-        entity = new Entity(model, new Vector3f(0, 0, -1), new Vector3f(0, 0, 0), 2);
+        entity = new Entity(model, new Vector3f(0, 0, -5), new Vector3f(0, 0, 0), 10);
 
-        float lightIntensity = 0.0f;
-        Vector3f lightPosition = new Vector3f(-1,-10,0);
-        Vector3f lightColor = new Vector3f(1,1,1);
+        float lightIntensity = 1.0f;
+        Vector3f lightPosition = new Vector3f(0,1.25f,-6f);
+        Vector3f lightColor = new Vector3f(1,0,0);
+        pointLight = new PointLight(lightColor, lightPosition, lightIntensity, 0,0,1);
+
+        lightPosition = new Vector3f(-1,-10,0);
+        lightColor = new Vector3f(1,1,1);
         directionalLight = new DirectionalLight(lightColor, lightPosition, lightIntensity);
     }
-
     @Override
     public void input() {
         cameraInc.set(0, 0,0);
@@ -78,8 +90,13 @@ public class TestGame implements ILogic {
             camera.setPosition(0, 0, 0);
             camera.setRotation(0, 0, 0);
         }
+        if (windowManager.isKeyPressed(GLFW.GLFW_KEY_O)) {
+            pointLight.getPosition().x += 0.1f;
+        }
+        if (windowManager.isKeyPressed(GLFW.GLFW_KEY_P)) {
+            pointLight.getPosition().x -= 0.1f;
+        }
     }
-
     @Override
     public void update(float interval, MouseInput mouseInput) {
         camera.movePosition(
@@ -117,12 +134,10 @@ public class TestGame implements ILogic {
         directionalLight.getDirection().x = (float) Math.sin(angRad);
         directionalLight.getDirection().y = (float) Math.cos(angRad);
     }
-
     @Override
     public void render() {
-        renderManager.render(entity, camera, directionalLight);
+        renderManager.render(entity, camera, directionalLight, pointLight);
     }
-
     @Override
     public void cleanup() {
         renderManager.cleanup();
