@@ -28,12 +28,12 @@ public class TestGame implements ILogic {
     private Entity entity;
     private Camera camera;
     private DirectionalLight directionalLight;
-    private PointLight pointLight;
-    private SpotLight spotLight;
+    private PointLight[] pointLights;
+    private SpotLight[] spotLights;
 
     // TestGame Variables
     Vector3f cameraInc;
-    private float lightAngle;
+    private float lightAngle, spotAngle = 0, spotInc = 1;
 
     // Main
     public TestGame() {
@@ -50,24 +50,35 @@ public class TestGame implements ILogic {
     public void init() throws Exception {
         renderManager.init();
 
-        Model model = objectLoader.loadOBJModel("/models/bunny.obj");
-        model.setTexture(new Texture(objectLoader.loadTexture("D:\\JavaGames\\Java3DGame\\Java3DGame\\textures\\grassblock.png")), 1f);
+        Model model = objectLoader.loadOBJModel("/models/cube.obj");
+        model.setTexture(new Texture(objectLoader.loadTexture("Java3DGame/textures/grassblock.png")), 1f);
 //        model.setTexture(new Texture(objectLoader.loadTexture("D:\\JavaGames\\Java3DGame\\Java3DGame\\textures\\2.jpg")));
-        entity = new Entity(model, new Vector3f(0, 0, -5), new Vector3f(0, 0, 0), 10);
+        entity = new Entity(model, new Vector3f(0, 0, -3), new Vector3f(0, 0, 0), 1);
 
         float lightIntensity = 1.0f;
-        Vector3f lightPosition = new Vector3f(0,1.25f,-6f);
-        Vector3f lightColor = new Vector3f(1,0,0);
-        pointLight = new PointLight(lightColor, lightPosition, lightIntensity, 0,0,1);
+
+        // Point Light
+        Vector3f lightPosition = new Vector3f(-0.5f,-0.5f,-6f);
+        Vector3f lightColor = new Vector3f(1,1,1);
+        PointLight pointLight = new PointLight(lightColor, lightPosition, lightIntensity, 0,0,1);
 
         // Spotlight
-        Vector3f coneDirection = new Vector3f(0, -1.25f, -3.2f);
+        Vector3f coneDirection = new Vector3f(0, 0, -1);
         float cutoff = (float) Math.cos(Math.toRadians(180));
-        spotLight = new SpotLight(new PointLight(lightColor, new Vector3f(0, 0, 1f), lightIntensity, 0, 0, 1), coneDirection, cutoff);
+        SpotLight spotLight = new SpotLight(new PointLight(lightColor, new Vector3f(0, 0, -3.6f),
+                lightIntensity, 0, 0, 0.2f), coneDirection, cutoff);
 
+        SpotLight spotLight1 = new SpotLight(new PointLight(lightColor, new Vector3f(0, 0, -3.6f),
+                lightIntensity, 0, 0, 1), coneDirection, cutoff);
+        spotLight1.getPointLight().setPosition(new Vector3f(0.5f,0.5f,-6f));
+
+        // Directional Light
         lightPosition = new Vector3f(-1,-10,0);
         lightColor = new Vector3f(1,1,1);
         directionalLight = new DirectionalLight(lightColor, lightPosition, lightIntensity);
+
+        pointLights = new PointLight[] {pointLight};
+        spotLights = new SpotLight[] {spotLight, spotLight1};
     }
     @Override
     public void input() {
@@ -98,18 +109,18 @@ public class TestGame implements ILogic {
             camera.setRotation(0, 0, 0);
         }
         if (windowManager.isKeyPressed(GLFW.GLFW_KEY_O)) {
-            pointLight.getPosition().x += 0.1f;
+            pointLights[0].getPosition().x += 0.1f;
         }
         if (windowManager.isKeyPressed(GLFW.GLFW_KEY_P)) {
-            pointLight.getPosition().x -= 0.1f;
+            pointLights[0].getPosition().x -= 0.1f;
         }
-        var lightPos = spotLight.getPointLight().getPosition().z;
+        var lightPos = spotLights[0].getPointLight().getPosition().z;
 
         if (windowManager.isKeyPressed(GLFW.GLFW_KEY_N))
-            spotLight.getPointLight().getPosition().z = lightPos + 0.1f;
+            spotLights[0].getPointLight().getPosition().z = lightPos + 0.1f;
 
         if (windowManager.isKeyPressed(GLFW.GLFW_KEY_M))
-            spotLight.getPointLight().getPosition().z = lightPos - 0.1f;
+            spotLights[0].getPointLight().getPosition().z = lightPos - 0.1f;
     }
     @Override
     public void update(float interval, MouseInput mouseInput) {
@@ -124,9 +135,21 @@ public class TestGame implements ILogic {
             camera.moveRotation(rotVec.x * Consts.MOUSE_SENSITIVITY, rotVec.y * Consts.MOUSE_SENSITIVITY, 0);
         }
 
-//        entity.incrementRotation(0.0f, 0.25f, 0.0f);
-        lightAngle += 0.5f;
+        //entity.incrementRotation(0.0f, 0.25f, 0.0f);
 
+        spotAngle += spotInc * 0.05f;
+        if (spotAngle > 4) {
+            spotInc = -1;
+        }
+        else if (spotAngle <= -4) {
+            spotInc = 1;
+        }
+
+        double spotAngleRad = Math.toRadians(spotAngle);
+        Vector3f coneDir = spotLights[0].getPointLight().getPosition();
+        coneDir.y = (float) Math.sin(spotAngleRad);
+
+        lightAngle += 0.5f;
         if (lightAngle > 90) {
             directionalLight.setIntensity(0);
 
@@ -150,7 +173,7 @@ public class TestGame implements ILogic {
     }
     @Override
     public void render() {
-        renderManager.render(entity, camera, directionalLight, pointLight, spotLight);
+        renderManager.render(entity, camera, directionalLight, pointLights, spotLights);
     }
     @Override
     public void cleanup() {

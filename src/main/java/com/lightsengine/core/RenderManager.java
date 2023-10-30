@@ -34,6 +34,8 @@ public class RenderManager {
     private final String directionalLightUniformName = "directionalLight";
     private final String pointLightUniformName = "pointLight";
     private final String spotLightUniformName = "spotLight";
+    private final String pointLightsUniformName = "pointLights";
+    private final String spotLightsUniformName = "spotLights";
 
 
     //Main
@@ -55,14 +57,14 @@ public class RenderManager {
         shaderManager.createMaterialUniform(materialUniformName);
         shaderManager.createUniform(specularPowerUniformName);
         shaderManager.createDirectionalLightUniform(directionalLightUniformName);
-        shaderManager.createPointLightUniform(pointLightUniformName);
-        shaderManager.createSpotLightUniform(spotLightUniformName);
+        shaderManager.createPointLightListUniform(pointLightsUniformName, 5);
+        shaderManager.createSpotLightListUniform(spotLightsUniformName, 5);
     }
     public void render(Entity entity,
                        Camera camera,
                        DirectionalLight directionalLight,
-                       PointLight pointLight,
-                       SpotLight spotLight) {
+                       PointLight[] pointLights,
+                       SpotLight[] spotLights) {
         clear();
 
         if (windowManager.isResize()) {
@@ -79,9 +81,15 @@ public class RenderManager {
         shaderManager.setUniform(materialUniformName, entity.getModel().getMaterial());
         shaderManager.setUniform(specularPowerUniformName, Consts.SPECULAR_POWER);
         shaderManager.setUniform(directionalLightUniformName, directionalLight);
-        shaderManager.setUniform(pointLightUniformName, pointLight);
-        shaderManager.setUniform(spotLightUniformName, spotLight);
 
+        int numLights = spotLights != null ? spotLights.length : 0;
+        for (int i = 0; i < numLights; i++) {
+            shaderManager.setUniform(spotLightsUniformName, spotLights[i], i);
+        }
+        numLights = pointLights != null ? pointLights.length : 0;
+        for (int i = 0; i < numLights; i++) {
+            shaderManager.setUniform(pointLightsUniformName, pointLights[i], i);
+        }
 
         GL30.glBindVertexArray(entity.getModel().getId());
         GL20.glEnableVertexAttribArray(0);
