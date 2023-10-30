@@ -4,8 +4,10 @@ package com.lightsengine.test;
 import com.lightsengine.core.*;
 import com.lightsengine.core.entity.Entity;
 
+import com.lightsengine.core.entity.Material;
 import com.lightsengine.core.entity.Texture;
 import com.lightsengine.core.inputs.MouseInput;
+import com.lightsengine.core.landscape.Terrain;
 import com.lightsengine.core.lighting.DirectionalLight;
 import com.lightsengine.core.lighting.PointLight;
 import com.lightsengine.core.lighting.SpotLight;
@@ -33,6 +35,7 @@ public class TestGame implements ILogic {
     private final ObjectLoader objectLoader;
 
     private List<Entity> entities;
+    private List<Terrain> terrains;
     private final Camera camera;
 
     private final Vector3f cameraInc;
@@ -55,24 +58,31 @@ public class TestGame implements ILogic {
     public void init() throws Exception {
         renderManager.init();
 
-        // model and model texture
+        // Model and Model Texture
         var model = objectLoader.loadObjModel("/models/cube.obj");
         model.setTexture(new Texture(objectLoader.loadTexture("D:\\JavaGames\\Java3DGame\\Java3DGame\\textures\\grassblock.png")), 1f);
 
+        // Terrains
+        terrains = new ArrayList<>();
+        Terrain terrain = new Terrain(new Vector3f(0, -1, -800), objectLoader,new Material(new Texture(objectLoader.loadTexture("D:\\JavaGames\\Java3DGame\\Java3DGame\\textures\\terrain.png")), 0.1f));
+        Terrain terrain2 = new Terrain(new Vector3f(-800, -1, -800), objectLoader,new Material(new Texture(objectLoader.loadTexture("D:\\JavaGames\\Java3DGame\\Java3DGame\\textures\\flowers.png")), 0.1f));
+        terrains.add(terrain); terrains.add(terrain2);
+
+        // Entities
         entities = new ArrayList<>();
         var rnd = new Random();
 
-        for (var i = 0; i < 200; i++) {
+        for (var i = 0; i < 2000; i++) {
             // renders 200 entities of the same model and texture
-            var x = rnd.nextFloat() * 100 - 50;
-            var y = rnd.nextFloat() * 100 - 50;
-            var z = rnd.nextFloat() * -300;
+            var x = rnd.nextFloat() * 800;
+//            var y = rnd.nextFloat() * 100 - 50;
+            var z = rnd.nextFloat() * -800;
 
-            var entityPosition = new Vector3f(x, y, z);
-            var entityRotation = new Vector3f(rnd.nextFloat() * 180, rnd.nextFloat() * 180, 0);
-            var entityScale = 1;
+//            var entityPosition = new Vector3f(x, y, z);
+//            var entityRotation = new Vector3f(rnd.nextFloat() * 180, rnd.nextFloat() * 180, 0);
+//            var entityScale = 1;
 
-            entities.add(new Entity(model, entityPosition, entityRotation, entityScale));
+            entities.add(new Entity(model, new Vector3f(x,0,z), new Vector3f(0,0,0),1));
         }
 
         entities.add(new Entity(model, new Vector3f(0, 0, -3f), new Vector3f(0, 0, 0), 1));
@@ -195,6 +205,9 @@ public class TestGame implements ILogic {
 
         for (var entity : entities) {
             renderManager.processEntity(entity);
+        }
+        for (var terrain : terrains) {
+            renderManager.processTerrain(terrain);
         }
     }
 

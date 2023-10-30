@@ -2,6 +2,7 @@ package com.lightsengine.core.utils;
 
 import com.lightsengine.core.Camera;
 import com.lightsengine.core.entity.Entity;
+import com.lightsengine.core.landscape.Terrain;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -17,7 +18,11 @@ public class Transformation {
 
         return matrix;
     }
-
+    public  static Matrix4f createTransformationMatrix(Terrain terrain) {
+        var matrix = new Matrix4f();
+        matrix.identity().translate(terrain.getPosition()).scale(1);
+        return matrix;
+    }
     public static Matrix4f getViewMatrix(Camera camera) {
         var position = camera.getPosition();
         var rotation = camera.getRotation();

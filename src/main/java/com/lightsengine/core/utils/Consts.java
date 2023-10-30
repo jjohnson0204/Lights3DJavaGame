@@ -7,6 +7,10 @@ public class Consts {
     // Strings
     public static final String TITLE = "Lights 3D Java";
 
+    // Integers
+    public static final int MAX_SPOT_LIGHTS = 5;
+    public static final int MAX_POINT_LIGHTS = 5;
+
     // Floats
     public static final float FOV = (float) Math.toRadians(60);
     public static final float Z_NEAR = 0.01f;
