@@ -1,57 +1,85 @@
 package com.lightsengine.core.inputs;
 
+import com.lightsengine.core.WindowManager;
 import com.lightsengine.test.Main;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
 public class MouseInput {
+    private final Vector2d previousPosition, currentPosition;
+    private final Vector2f displayVector;
 
-    private final Vector2d previousPos, currentPos;
-    private final Vector2f displayVec;
+    private final WindowManager windowManager;
+
     private boolean inWindow = false, leftButtonPress = false, rightButtonPress = false;
 
-    public MouseInput() {
-        previousPos = new Vector2d(-1,-1);
-        currentPos = new Vector2d(0,0);
-        displayVec = new Vector2f();
+    public MouseInput(WindowManager windowManager) {
+        previousPosition = new Vector2d(-1, -1);
+        currentPosition = new Vector2d(0, 0);
+        displayVector = new Vector2f();
+
+        this.windowManager = windowManager;
     }
 
     public void init() {
-        GLFW.glfwSetCursorPosCallback(Main.getWindowManager().getWindowHandle(), (window, xpos, ypos) -> {
-            currentPos.x = xpos;
-            currentPos.y = ypos;
+
+        // The video for tutorial #10 does not define the implementation for:
+        // Main.getWindow().getWindowHandle()
+
+        /*
+        GLFW.glfwSetCursorPosCallback(Main.getWindow().getWindowHandle(), (window, xpos, ypos) -> {
+            currentPosition.x = xpos;
+            currentPosition.y = ypos;
         });
-        GLFW.glfwSetCursorEnterCallback(Main.getWindowManager().getWindowHandle(), (window, entered) -> {
+
+        GLFW.glfwSetCursorEnterCallback(Main.getWindow().getWindowHandle(), (window, entered) -> {
             inWindow = entered;
         });
-        GLFW.glfwSetMouseButtonCallback(Main.getWindowManager().getWindowHandle(), (window, button, action, mods) -> {
+
+        GLFW.glfwSetMouseButtonCallback(Main.getWindow().getWindowHandle(), (window, button, action, mods) -> {
+            leftButtonPress = button == GLFW.GLFW_MOUSE_BUTTON_1 && action == GLFW.GLFW_PRESS;
+            rightButtonPress = button == GLFW.GLFW_MOUSE_BUTTON_2 && action == GLFW.GLFW_PRESS;
+        });
+        */
+
+
+        GLFW.glfwSetCursorPosCallback(windowManager.getWindow(), (window, xpos, ypos) -> {
+            currentPosition.x = xpos;
+            currentPosition.y = ypos;
+        });
+
+        GLFW.glfwSetCursorEnterCallback(windowManager.getWindow(), (window, entered) -> inWindow = entered);
+
+        GLFW.glfwSetMouseButtonCallback(windowManager.getWindow(), (window, button, action, mods) -> {
             leftButtonPress = button == GLFW.GLFW_MOUSE_BUTTON_1 && action == GLFW.GLFW_PRESS;
             rightButtonPress = button == GLFW.GLFW_MOUSE_BUTTON_2 && action == GLFW.GLFW_PRESS;
         });
     }
 
     public void input() {
-        displayVec.x = 0;
-        displayVec.y = 0;
-        if (previousPos.x > 0 && previousPos.y > 0 && inWindow) {
-            double x = currentPos.x - previousPos.x;
-            double y = currentPos.y - previousPos.y;
-            boolean rotateX = x != 0;
-            boolean rotateY = y != 0;
-            if (rotateX) {
-                displayVec.y = (float) x;
-            }
-            if (rotateY) {
-                displayVec.x = (float) y;
-            }
+        displayVector.x = 0;
+        displayVector.y = 0;
+
+        if (previousPosition.x > 0 && previousPosition.y > 0 && inWindow) {
+            var x = currentPosition.x - previousPosition.x;
+            var y = currentPosition.y - previousPosition.y;
+            var rotateX = x != 0;
+            var rotateY = y != 0;
+
+            if (rotateX)
+                displayVector.y = (float) x;
+
+            if (rotateY)
+                displayVector.x = (float) y;
         }
-        previousPos.x = currentPos.x;
-        previousPos.y = currentPos.y;
+
+        previousPosition.x = currentPosition.x;
+        previousPosition.y = currentPosition.y;
     }
 
-    public Vector2f getDisplayVec() {
-        return displayVec;
+    public Vector2f getDisplayVector() {
+        return displayVector;
     }
 
     public boolean isLeftButtonPress() {

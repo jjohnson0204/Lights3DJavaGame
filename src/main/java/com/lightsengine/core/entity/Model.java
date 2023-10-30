@@ -1,10 +1,8 @@
 package com.lightsengine.core.entity;
 
-import org.w3c.dom.Text;
-
 public class Model {
-    private int id;
-    private int vertexCount;
+    private final int id;
+    private final int vertexCount;
     private Material material;
 
     public Model(int id, int vertexCount) {
@@ -51,7 +49,7 @@ public class Model {
     }
 
     public void setTexture(Texture texture, float reflectance) {
-        this.material.setTexture(texture);
-        this.material.setReflectance(reflectance);
+        material.setTexture(texture);
+        material.setReflectance(reflectance);
     }
 }

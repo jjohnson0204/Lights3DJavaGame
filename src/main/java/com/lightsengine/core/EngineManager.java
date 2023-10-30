@@ -1,98 +1,118 @@
 package com.lightsengine.core;
 
 import com.lightsengine.core.inputs.MouseInput;
-import com.lightsengine.test.Main;
 import com.lightsengine.core.utils.Consts;
+import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.opengl.GL11;
+
+import static org.lwjgl.opengl.GL11C.GL_VERSION;
 
 public class EngineManager {
     public static final long NANOSECOND = 1000000000L;
-    public static final float FRAMERATE = 1000.0f;
+    public static final float FRAMERATE = 1000;
+    private static final float FRAMETIME = 1.0f / FRAMERATE;
+
     private static int fps;
-    private static final float frameTime = 1.0f / FRAMERATE;
+
     private boolean isRunning;
-    private WindowManager windowManager;
+    private final WindowManager windowManager;
     private MouseInput mouseInput;
     private GLFWErrorCallback errorCallback;
-    private ILogic gameLogic;
+    private final ILogic gameLogic;
 
-    private  void init() throws Exception {
+    public EngineManager(WindowManager windowManager, ILogic gameLogic) {
+        this.windowManager = windowManager;
+        this.gameLogic = gameLogic;
+    }
+
+    private void init() throws Exception {
         GLFW.glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
-        windowManager = Main.getWindowManager();
-        mouseInput = new MouseInput();
-        gameLogic = Main.getGame();
+        mouseInput = new MouseInput(windowManager);
 
         windowManager.init();
         gameLogic.init();
         mouseInput.init();
     }
+
     public void start() throws Exception {
         init();
-        if (isRunning) {
+
+        if (isRunning)
             return;
-        }
+
         run();
     }
+
     public void run() {
-        this.isRunning = true;
-        int frames = 0;
-        long frameCounter = 0;
-        long lastTime = System.nanoTime();
+        System.out.println("LWJGL Version: " + Version.getVersion());
+        System.out.println("OpenGL Version: " + GL11.glGetString(GL_VERSION));
+
+        isRunning = true;
+
+        var frames = 0;
+        var frameCounter = 0;
+        var lastTime = System.nanoTime();
         double unprocessedTime = 0;
 
         while (isRunning) {
             boolean render = false;
             long startTime = System.nanoTime();
-            long passedTime = startTime - lastTime;
+            long elapsedTime = startTime - lastTime;
             lastTime = startTime;
 
-            unprocessedTime += passedTime / (double) NANOSECOND;
-            frameCounter += passedTime;
+            unprocessedTime += elapsedTime / (double) NANOSECOND;
+            frameCounter += elapsedTime;
 
             input();
 
-            while (unprocessedTime > frameTime) {
+            while (unprocessedTime > FRAMETIME) {
                 render = true;
-                unprocessedTime -= frameTime;
+                unprocessedTime -= FRAMETIME;
 
-                if (windowManager.windowShouldClose()) {
+                if (windowManager.windowShouldClose())
                     stop();
-                }
 
                 if (frameCounter >= NANOSECOND) {
                     setFps(frames);
-                    windowManager.setTitle(Consts.TITLE + " - FPS: " + getFps());
+                    windowManager.setTitle(Consts.TITLE + ": " + getFps());
                     frames = 0;
                     frameCounter = 0;
                 }
             }
 
             if (render) {
-                update(frameTime);
+                update(0);
                 render();
                 frames++;
             }
         }
+
         cleanup();
-     }
-    private void stop() {
-        if (!isRunning) {
+    }
+
+    public void stop() {
+        if (!isRunning)
             return;
-        }
+
         isRunning = false;
-     }
+    }
+
     private void input() {
         mouseInput.input();
         gameLogic.input();
-     }
+    }
+
     private void render() {
         gameLogic.render();
         windowManager.update();
     }
+
     private void update(float interval) {
         gameLogic.update(interval, mouseInput);
-     }
+    }
+
     private void cleanup() {
         gameLogic.cleanup();
         windowManager.cleanup();

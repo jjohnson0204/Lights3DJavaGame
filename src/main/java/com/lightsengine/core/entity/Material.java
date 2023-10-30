@@ -4,32 +4,40 @@ import com.lightsengine.core.utils.Consts;
 import org.joml.Vector4f;
 
 public class Material {
-    private Vector4f ambientColor, diffuserColor, specularColor;
+    private Vector4f ambientColor, diffuseColor, specularColor;
     private float reflectance;
     private Texture texture;
 
     public Material() {
-        this.ambientColor = Consts.DEFAULT_COLOR;
-        this.diffuserColor = Consts.DEFAULT_COLOR;
-        this.specularColor = Consts.DEFAULT_COLOR;
-        this.texture = null;
-        this.reflectance = 0;
+        ambientColor = Consts.DEFAULT_COLOR;
+        diffuseColor = Consts.DEFAULT_COLOR;
+        specularColor = Consts.DEFAULT_COLOR;
+        texture = null;
+        reflectance = 0;
     }
+
     public Material(Vector4f color, float reflectance) {
         this(color, color, color, reflectance, null);
     }
+
     public Material(Vector4f color, float reflectance, Texture texture) {
         this(color, color, color, reflectance, texture);
     }
+
     public Material(Texture texture) {
         this(Consts.DEFAULT_COLOR, Consts.DEFAULT_COLOR, Consts.DEFAULT_COLOR, 0, texture);
     }
-    public Material(Vector4f ambientColor, Vector4f diffuserColor, Vector4f specularColor, float reflectance, Texture texture) {
+
+    public Material(Vector4f ambientColor, Vector4f diffuseColor, Vector4f specularColor, float reflectance, Texture texture) {
         this.ambientColor = ambientColor;
-        this.diffuserColor = diffuserColor;
+        this.diffuseColor = diffuseColor;
         this.specularColor = specularColor;
         this.reflectance = reflectance;
         this.texture = texture;
+    }
+
+    public boolean hasTexture() {
+        return texture != null;
     }
 
     public Vector4f getAmbientColor() {
@@ -40,12 +48,12 @@ public class Material {
         this.ambientColor = ambientColor;
     }
 
-    public Vector4f getDiffuserColor() {
-        return diffuserColor;
+    public Vector4f getDiffuseColor() {
+        return diffuseColor;
     }
 
-    public void setDiffuserColor(Vector4f diffuserColor) {
-        this.diffuserColor = diffuserColor;
+    public void setDiffuseColor(Vector4f diffuseColor) {
+        this.diffuseColor = diffuseColor;
     }
 
     public Vector4f getSpecularColor() {
@@ -70,9 +78,5 @@ public class Material {
 
     public void setTexture(Texture texture) {
         this.texture = texture;
-    }
-
-    public boolean hasTexture() {
-        return texture != null;
     }
 }
