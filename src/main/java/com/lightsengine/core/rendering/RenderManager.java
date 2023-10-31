@@ -2,6 +2,7 @@ package com.lightsengine.core.rendering;
 
 // Class Imports
 import com.lightsengine.core.Camera;
+import com.lightsengine.core.SceneManager;
 import com.lightsengine.core.ShaderManager;
 import com.lightsengine.core.WindowManager;
 import com.lightsengine.core.entity.Entity;
@@ -59,7 +60,7 @@ public class RenderManager {
         shaderManager.setUniform(directionalLightUniformName, directionalLight);
     }
 
-    public void render(Camera camera, DirectionalLight directionalLight, PointLight[] pointLights, SpotLight[] spotLights) {
+    public void render(Camera camera, SceneManager sceneManager) {
         clear();
 
         if (windowManager.isResize()) {
@@ -67,8 +68,8 @@ public class RenderManager {
             windowManager.setResize(true);
         }
 
-        entityRenderer.render(camera, pointLights, spotLights, directionalLight);
-        terrainRenderer.render(camera, pointLights, spotLights, directionalLight);
+        entityRenderer.render(camera, sceneManager.getPointLights(), sceneManager.getSpotLights(), sceneManager.getDirectionalLight());
+        terrainRenderer.render(camera, sceneManager.getPointLights(), sceneManager.getSpotLights(), sceneManager.getDirectionalLight());
     }
 
     public void processEntity(Entity entity) {
